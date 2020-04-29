@@ -1,4 +1,4 @@
-package com.thoughtworks.data.authmodeldemo.spike
+package com.thoughtworks.data.authmodeldemo.spike.view
 
 import android.content.Context
 import android.hardware.Sensor
@@ -9,10 +9,13 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.thoughtworks.data.authmodeldemo.R
+import com.thoughtworks.data.authmodeldemo.spike.model.SensorData
+import com.thoughtworks.data.authmodeldemo.spike.model.Vector3
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import io.reactivex.rxjava3.functions.BiFunction
 import java.util.concurrent.TimeUnit
+import kotlin.math.max
 
 class SensorDataActivity : AppCompatActivity() {
 
@@ -31,15 +34,16 @@ class SensorDataActivity : AppCompatActivity() {
         val gravityObservable = naiveObserveSensorChanged(sensorManager, gravitySensor, 100)
         val accelerometerObservable =
             naiveObserveSensorChanged(sensorManager, accelerometerSensor, 100)
-        val disposable = Observable.combineLatest<SensorEvent, SensorEvent, String>(
+        val disposable = Observable.combineLatest<SensorEvent, SensorEvent, SensorData>(
             gravityObservable,
             accelerometerObservable,
-            BiFunction<SensorEvent, SensorEvent, String> { gravitySensorEvent, accelerometerSensorEvent ->
-                return@BiFunction "time: ${gravitySensorEvent.timestamp} gravity: ${gravitySensorEvent?.values?.joinToString { "$it, " }}\naccelerometer: ${accelerometerSensorEvent?.values?.joinToString { "$it, " }}"
+            BiFunction<SensorEvent, SensorEvent, SensorData> { gravitySensorEvent, accelerometerSensorEvent ->
+                val timestamp = max(gravitySensorEvent.timestamp, accelerometerSensorEvent.timestamp)
+                return@BiFunction SensorData(timestamp, Vector3(gravitySensorEvent.values), Vector3(accelerometerSensorEvent.values))
             })
-            .sample(10 * 100, TimeUnit.MILLISECONDS)
+            .sample(100 * Hz, TimeUnit.MILLISECONDS)
             .subscribe {
-                Log.i(TAG, it)
+                Log.i(TAG, it.toString())
             }
     }
 
@@ -63,6 +67,7 @@ class SensorDataActivity : AppCompatActivity() {
 
     companion object {
         val TAG = SensorDataActivity::class.java.simpleName
+        val Hz = 10L
     }
 
 }
