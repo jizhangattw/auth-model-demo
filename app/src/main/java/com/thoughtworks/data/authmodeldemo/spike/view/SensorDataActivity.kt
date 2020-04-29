@@ -56,10 +56,10 @@ class SensorDataActivity : AppCompatActivity() {
             .sample(ms(100), TimeUnit.MILLISECONDS)
             .buffer(AVERAGE_COUNT)
             .subscribe {
-                val sensorSumData = it.reduce { acc, sensorData ->
+                val sensorAverageData = it.reduce { acc, sensorData ->
                     acc + sensorData
                 } / AVERAGE_COUNT.toLong()
-                Log.i(TAG, sensorSumData.toString())
+                Log.i(TAG, sensorAverageData.toString())
             }
     }
 
