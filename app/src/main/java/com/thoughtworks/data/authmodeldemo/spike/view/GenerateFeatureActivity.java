@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.jetbrains.annotations.NotNull;
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.support.common.FileUtil;
@@ -39,8 +40,8 @@ public class GenerateFeatureActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("*********************************load model success******************************");
-        generateFeature();
+        System.out.println("*****************load model success***************");
+        generateFeature(loadSample());
     }
 
     private void loadModel(String filename) throws IOException {
@@ -64,7 +65,16 @@ public class GenerateFeatureActivity extends AppCompatActivity {
         System.out.println("Created a Tensorflow Lite CNN model.");
     }
 
-    public void generateFeature() {
+    public float[] generateFeature(List<Float> sample) {
+        //sample size = 25 * 9  ->  (9+9+...+9)
+        inputBuffer.loadArray(ArrayUtils.toPrimitive(sample.toArray(new Float[sample.size()]), 0.8F));
+        tflite.run(inputBuffer.getBuffer(), outputBuffer.getBuffer().rewind());
+        System.out.println("generate success!");
+        return outputBuffer.getFloatArray();
+    }
+
+    @NotNull
+    private List<Float> loadSample() {
         InputStream inputStream;
         List<Float> sample = new ArrayList<>();
         try {
@@ -82,10 +92,6 @@ public class GenerateFeatureActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(sample.size());
-        inputBuffer.loadArray(ArrayUtils.toPrimitive(sample.toArray(new Float[sample.size()]), 0.8F));
-        tflite.run(inputBuffer.getBuffer(), outputBuffer.getBuffer().rewind());
-        System.out.println("run success!");
-        System.out.println(Arrays.toString(outputBuffer.getFloatArray()));
+        return sample;
     }
 }
