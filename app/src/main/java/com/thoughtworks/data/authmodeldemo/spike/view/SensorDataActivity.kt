@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.thoughtworks.data.authmodeldemo.R
 import com.thoughtworks.data.authmodeldemo.spike.model.SensorData
 import com.thoughtworks.data.authmodeldemo.spike.model.Vector3
-import hu.akarnokd.rxjava3.math.MathFlowable
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.FlowableOnSubscribe
