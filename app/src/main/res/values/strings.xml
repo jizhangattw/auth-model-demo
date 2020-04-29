@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">AuthModelDemo</string>
+    <string name="app_name">Auth Model Demo</string>
+    <string name="spike_sensor_data_collection">Spike Sensor数据采集</string>
 </resources>
