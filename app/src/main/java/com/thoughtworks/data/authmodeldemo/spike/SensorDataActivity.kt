@@ -12,6 +12,7 @@ import com.thoughtworks.data.authmodeldemo.R
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import io.reactivex.rxjava3.functions.BiFunction
+import java.util.concurrent.TimeUnit
 
 class SensorDataActivity : AppCompatActivity() {
 
@@ -34,10 +35,12 @@ class SensorDataActivity : AppCompatActivity() {
             gravityObservable,
             accelerometerObservable,
             BiFunction<SensorEvent, SensorEvent, String> { gravitySensorEvent, accelerometerSensorEvent ->
-                return@BiFunction "gravity: ${gravitySensorEvent?.values?.joinToString { "$it, " }}\naccelerometer: ${accelerometerSensorEvent?.values?.joinToString { "$it, " }}"
-            }).subscribe {
-            Log.i(TAG, it)
-        }
+                return@BiFunction "time: ${gravitySensorEvent.timestamp} gravity: ${gravitySensorEvent?.values?.joinToString { "$it, " }}\naccelerometer: ${accelerometerSensorEvent?.values?.joinToString { "$it, " }}"
+            })
+            .sample(10 * 100, TimeUnit.MILLISECONDS)
+            .subscribe {
+                Log.i(TAG, it)
+            }
     }
 
     private fun naiveObserveSensorChanged(
@@ -59,7 +62,7 @@ class SensorDataActivity : AppCompatActivity() {
     }
 
     companion object {
-        val TAG = this::class.java.simpleName
+        val TAG = SensorDataActivity::class.java.simpleName
     }
 
 }
