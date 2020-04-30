@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.chaquo.python'
 
 android {
     compileSdkVersion 28
@@ -20,6 +21,10 @@ android {
             cmake {
                 cppFlags ""
             }
+        }
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
         }
     }
 
@@ -49,7 +54,7 @@ android {
 dependencies {
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.0")
 
-    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite:2.1.0'
     implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
     implementation 'org.apache.commons:commons-lang3:3.9'
 

@@ -17,4 +17,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/spike_feature" />
+
+    <Button
+        android:id="@+id/segmentDataButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/spike_segmentData" />
 </LinearLayout>
