@@ -7,10 +7,6 @@ android {
     buildToolsVersion "29.0.3"
     ndkVersion '21.1.6352462'
 
-    aaptOptions {
-        noCompress "tflite"
-    }
-
     defaultConfig {
         applicationId "com.thoughtworks.data.authmodeldemo"
         minSdkVersion 26
@@ -36,27 +32,32 @@ android {
 
     externalNativeBuild {
         cmake {
-            path "src/main/cpp/CMakeLists.txt"
             version "3.10.2"
         }
     }
+
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
+    }
+
+    aaptOptions {
+        noCompress "tflite"
     }
 }
 
 dependencies {
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.0")
 
+    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
+    implementation 'org.apache.commons:commons-lang3:3.9'
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
-    implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
-    implementation 'org.apache.commons:commons-lang3:3.9'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

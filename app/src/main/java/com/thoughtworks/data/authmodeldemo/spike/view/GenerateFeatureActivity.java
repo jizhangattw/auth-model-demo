@@ -4,13 +4,14 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.thoughtworks.data.authmodeldemo.R;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.support.common.FileUtil;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
-
-import com.thoughtworks.data.authmodeldemo.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 public class GenerateFeatureActivity extends AppCompatActivity {
     private final Interpreter.Options tfliteOptions = new Interpreter.Options();
