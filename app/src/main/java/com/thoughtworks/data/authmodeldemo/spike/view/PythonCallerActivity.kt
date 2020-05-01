@@ -16,6 +16,8 @@ class PythonCallerActivity : AppCompatActivity() {
 
         val callAttr = python.getModule("hello").callAttr("hi", "Jian")
         Log.i(TAG, callAttr.toString())
+
+        python.getModule("testSklearn").callAttr("testOcsvm")
     }
 
     companion object {

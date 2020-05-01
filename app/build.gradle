@@ -26,6 +26,14 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
         }
+
+        python {
+            pip {
+                install "scipy==1.4.1"
+                install "numpy==1.17.4"
+                install "scikit-learn==0.22.1"
+            }
+        }
     }
 
     buildTypes {
