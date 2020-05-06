@@ -8,6 +8,7 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.chaquo.python.Python
 import com.thoughtworks.data.authmodeldemo.R
 import com.thoughtworks.data.authmodeldemo.main.util.ms
 import com.thoughtworks.data.authmodeldemo.spike.model.SensorData
@@ -19,12 +20,14 @@ import io.reactivex.rxjava3.functions.Function3
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
-class SensorDataActivity : AppCompatActivity() {
+
+class ReshapeDataActivity : AppCompatActivity() {
+
+    private val python = Python.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sensor_data)
-        title = getString(R.string.spike_sensor_data_collection)
+        setContentView(R.layout.activity_reshape_data)
 
         listenGravitySensorByObserve()
     }
@@ -38,7 +41,8 @@ class SensorDataActivity : AppCompatActivity() {
         val gravityFlowable = naiveObserveSensorChanged(sensorManager, gravitySensor, 100)
         val accelerometerFlowable =
             naiveObserveSensorChanged(sensorManager, accelerometerSensor, 100)
-        val magneticFieldFlowable = naiveObserveSensorChanged(sensorManager, magneticFieldSensor, 100)
+        val magneticFieldFlowable =
+            naiveObserveSensorChanged(sensorManager, magneticFieldSensor, 100)
 
         val sensorChangedFlowable =
             Flowable.combineLatest<SensorEvent, SensorEvent, SensorEvent, SensorData>(
@@ -58,12 +62,37 @@ class SensorDataActivity : AppCompatActivity() {
 
         sensorChangedFlowable
             .sample(ms(100), TimeUnit.MILLISECONDS)
-            .buffer(AVERAGE_COUNT)
-            .subscribe {
-                val sensorAverageData = it.reduce { acc, sensorData ->
+            // calculate average value
+            .buffer(SensorDataActivity.AVERAGE_COUNT)
+            .map {
+                it.reduce { acc, sensorData ->
                     acc + sensorData
-                } / AVERAGE_COUNT.toLong()
-                Log.i(TAG, sensorAverageData.toString())
+                } / SensorDataActivity.AVERAGE_COUNT.toLong()
+            }
+            // collect data more
+            .buffer(ms(25).toInt() * TIME)
+            // to 2d float array
+            .map {
+                return@map it.map {
+                    return@map floatArrayOf(
+                        it.accelerometer.x,
+                        it.accelerometer.y,
+                        it.accelerometer.z,
+                        it.gravity.x,
+                        it.gravity.y,
+                        it.gravity.z,
+                        it.magneticField.x,
+                        it.magneticField.y,
+                        it.magneticField.z
+                    )
+                }.toTypedArray()
+            }
+            .subscribe {
+                val result = python.getModule("reshape").callAttr(
+                    "reshape", it, WINDOW_SIZE,
+                    STEP_SIZE
+                )
+                Log.i(TAG, result.asList().map { it.asList().toString() }.toString())
             }
     }
 
@@ -86,8 +115,9 @@ class SensorDataActivity : AppCompatActivity() {
     }
 
     companion object {
-        val TAG = SensorDataActivity::class.java.simpleName
-        val AVERAGE_COUNT = 4
+        val TAG = ReshapeDataActivity::class.java.simpleName
+        const val TIME = 60
+        const val WINDOW_SIZE = 25
+        const val STEP_SIZE = 25
     }
-
 }

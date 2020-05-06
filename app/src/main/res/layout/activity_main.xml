@@ -19,8 +19,14 @@
         android:text="@string/spike_feature" />
 
     <Button
-        android:id="@+id/segmentDataButton"
+        android:id="@+id/callPythonButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/spike_segmentData" />
+        android:text="@string/spike_call_python" />
+
+    <Button
+        android:id="@+id/reshapeDataButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/spike_reshapeData" />
 </LinearLayout>

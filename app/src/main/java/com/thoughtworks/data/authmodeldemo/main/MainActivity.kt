@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.thoughtworks.data.authmodeldemo.R
 import com.thoughtworks.data.authmodeldemo.spike.view.GenerateFeatureActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.PythonCallerActivity
+import com.thoughtworks.data.authmodeldemo.spike.view.ReshapeDataActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.SensorDataActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -31,8 +32,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        segmentDataButton.setOnClickListener {
+        callPythonButton.setOnClickListener {
             val intent = Intent(this, PythonCallerActivity::class.java)
+            startActivity(intent)
+        }
+
+        reshapeDataButton.setOnClickListener {
+            val intent = Intent(this, ReshapeDataActivity::class.java)
             startActivity(intent)
         }
     }

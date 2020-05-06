@@ -66,6 +66,8 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
     implementation 'org.apache.commons:commons-lang3:3.9'
 
+    implementation 'com.google.code.gson:gson:2.8.6'
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'

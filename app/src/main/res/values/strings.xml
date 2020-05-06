@@ -2,5 +2,6 @@
     <string name="app_name">Auth Model Demo</string>
     <string name="spike_sensor_data_collection">Spike Sensor数据采集</string>
     <string name="spike_feature">Spike 特征生成</string>
-    <string name="spike_segmentData">Spike 数据分段</string>
+    <string name="spike_reshapeData">Spike 数据分段</string>
+    <string name="spike_call_python">调用Python</string>
 </resources>
