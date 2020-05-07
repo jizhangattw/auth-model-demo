@@ -4,4 +4,5 @@
     <string name="spike_feature">Spike 特征生成</string>
     <string name="spike_reshapeData">Spike 数据分段</string>
     <string name="spike_call_python">调用Python</string>
+    <string name="spike_getFeature">Spike 获取特征</string>
 </resources>

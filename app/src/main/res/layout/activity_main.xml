@@ -29,4 +29,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/spike_reshapeData" />
+
+    <Button
+        android:id="@+id/getFeatureButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/spike_getFeature" />
 </LinearLayout>
