@@ -32,6 +32,7 @@ class GetFeatureActivity : AppCompatActivity() {
     private fun listenGravitySensorByObserve() {
         collectData()
             .recordData()
+            .normalized()
             .reshapeData()
             .subscribe {
                 Log.i(TAG, it.toString())
@@ -85,7 +86,7 @@ class GetFeatureActivity : AppCompatActivity() {
         }, BackpressureStrategy.BUFFER)
     }
 
-    private fun Flowable<SensorData>.recordData(): Flowable<MutableList<SensorData>> {
+    private fun Flowable<SensorData>.recordData(): Flowable<Array<FloatArray>> {
         return buffer(SensorDataActivity.AVERAGE_COUNT)
             .map {
                 it.reduce { acc, sensorData ->
@@ -93,10 +94,7 @@ class GetFeatureActivity : AppCompatActivity() {
                 } / SensorDataActivity.AVERAGE_COUNT.toLong()
             }
             .buffer(ms(25).toInt() * ReshapeDataActivity.TIME)
-    }
-
-    private fun Flowable<MutableList<SensorData>>.reshapeData(): Flowable<Array<Array<Array<Float>>>> {
-        return map { list ->
+            .map { list ->
             list.map { sensorData ->
                 floatArrayOf(
                     sensorData.accelerometer.x,
@@ -109,25 +107,44 @@ class GetFeatureActivity : AppCompatActivity() {
                     sensorData.magneticField.y,
                     sensorData.magneticField.z
                 )
-            }
+            }.toTypedArray()
         }
-            .map {
-                val python = Python.getInstance()
-                val result = python.getModule("reshape").callAttr(
-                    "reshape", it.toTypedArray(), ReshapeDataActivity.WINDOW_SIZE,
-                    ReshapeDataActivity.STEP_SIZE
-                )
-                result.asList()
-                    .map { oneD ->
-                        oneD.asList()
-                            .map { twoD ->
-                                twoD.asList()
-                                    .map { threeD ->
-                                        threeD.toFloat()
-                                    }.toTypedArray()
-                            }.toTypedArray()
-                    }.toTypedArray()
-            }
+    }
+
+    private fun Flowable<Array<FloatArray>>.normalized(): Flowable<Array<FloatArray>> {
+        return map {
+            val python = Python.getInstance()
+            val result = python.getModule("scale_data").callAttr(
+                "scale_data", it
+            )
+            result.asList()
+                .map { oneD ->
+                    oneD.asList()
+                        .map { twoD ->
+                            twoD.toFloat()
+                        }.toFloatArray()
+                }.toTypedArray()
+        }
+    }
+
+    private fun Flowable<Array<FloatArray>>.reshapeData(): Flowable<Array<Array<Array<Float>>>> {
+        return map {
+            val python = Python.getInstance()
+            val result = python.getModule("reshape").callAttr(
+                "reshape", it, ReshapeDataActivity.WINDOW_SIZE,
+                ReshapeDataActivity.STEP_SIZE
+            )
+            result.asList()
+                .map { oneD ->
+                    oneD.asList()
+                        .map { twoD ->
+                            twoD.asList()
+                                .map { threeD ->
+                                    threeD.toFloat()
+                                }.toTypedArray()
+                        }.toTypedArray()
+                }.toTypedArray()
+        }
     }
 
     companion object {
