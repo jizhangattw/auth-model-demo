@@ -17,6 +17,7 @@
         <activity android:name=".spike.view.PythonCallerActivity" />
         <activity android:name=".spike.view.SensorDataActivity" />
         <activity android:name=".spike.view.GenerateFeatureActivity" />
+        <activity android:name=".spike.view.ParameterConfigActivity" />
         <activity android:name=".main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

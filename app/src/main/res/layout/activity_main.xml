@@ -35,4 +35,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/spike_getFeature" />
+
+    <Button
+        android:id="@+id/getParameterButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/parameter_config" />
 </LinearLayout>

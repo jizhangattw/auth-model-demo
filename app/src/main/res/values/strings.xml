@@ -5,4 +5,12 @@
     <string name="spike_reshapeData">Spike 数据分段</string>
     <string name="spike_call_python">调用Python</string>
     <string name="spike_getFeature">Spike 获取特征</string>
+    <string name="parameter_config">配置参数</string>
+    <string name="train_delay">train_delay</string>
+    <string name="nu">nu</string>
+    <string name="gamma">gamma</string>
+    <string name="detect_delay">detect_delay</string>
+    <string name="threshold">threshold</string>
+    <string name="language">language</string>
+    <string name="confirm">确认</string>
 </resources>

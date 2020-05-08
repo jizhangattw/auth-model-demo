@@ -1,0 +1,12 @@
+package com.thoughtworks.data.authmodeldemo.spike.view
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import com.thoughtworks.data.authmodeldemo.R
+
+class ParameterConfigActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_parameter_config)
+    }
+}

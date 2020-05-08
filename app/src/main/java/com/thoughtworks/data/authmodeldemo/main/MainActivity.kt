@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.thoughtworks.data.authmodeldemo.R
 import com.thoughtworks.data.authmodeldemo.spike.view.GenerateFeatureActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.GetFeatureActivity
+import com.thoughtworks.data.authmodeldemo.spike.view.ParameterConfigActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.PythonCallerActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.ReshapeDataActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.SensorDataActivity
@@ -45,6 +46,10 @@ class MainActivity : AppCompatActivity() {
 
         getFeatureButton.setOnClickListener {
             val intent = Intent(this, GetFeatureActivity::class.java)
+            startActivity(intent)
+        }
+        getParameterButton.setOnClickListener {
+            val intent = Intent(this, ParameterConfigActivity::class.java)
             startActivity(intent)
         }
     }
