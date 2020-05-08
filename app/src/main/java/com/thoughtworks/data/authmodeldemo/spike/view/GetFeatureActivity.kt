@@ -176,12 +176,11 @@ class GetFeatureActivity : AppCompatActivity() {
                         twoD.toList()
                     }
             }.toFloatArray()
-            val cutoff = flatData.size % (25 * 9)
+            val sampleSize = 25 * 9 //sample size = 25 * 9  ->  ( 9 + 9 + ... + 9)
+            val cutoff = flatData.size % sampleSize
             val inputArray = flatData.dropLast(cutoff).toFloatArray()
-
-            //sample size = 25 * 9  ->  ( 9 + 9 + ... + 9)
-            for (i in inputArray.indices step  25 * 9) {
-                val slice = inputArray.slice(IntRange(i, i + 25 * 9 - 1))
+            for (i in inputArray.indices step sampleSize) {
+                val slice = inputArray.slice(IntRange(i, i + sampleSize - 1))
                 inputBuffer.loadArray(slice.toFloatArray())
             }
             interpreter.run(inputBuffer.buffer, outputBuffer.buffer.rewind())
