@@ -17,6 +17,9 @@ import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.FlowableOnSubscribe
 import io.reactivex.rxjava3.functions.Function3
+import org.tensorflow.lite.Interpreter
+import org.tensorflow.lite.support.common.FileUtil
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
@@ -34,6 +37,7 @@ class GetFeatureActivity : AppCompatActivity() {
             .recordData()
             .normalized()
             .reshapeData()
+            .obtainFeature(this)
             .subscribe {
                 Log.i(TAG, it.toString())
             }
@@ -95,20 +99,20 @@ class GetFeatureActivity : AppCompatActivity() {
             }
             .buffer(ms(25).toInt() * ReshapeDataActivity.TIME)
             .map { list ->
-            list.map { sensorData ->
-                floatArrayOf(
-                    sensorData.accelerometer.x,
-                    sensorData.accelerometer.y,
-                    sensorData.accelerometer.z,
-                    sensorData.gravity.x,
-                    sensorData.gravity.y,
-                    sensorData.gravity.z,
-                    sensorData.magneticField.x,
-                    sensorData.magneticField.y,
-                    sensorData.magneticField.z
-                )
-            }.toTypedArray()
-        }
+                list.map { sensorData ->
+                    floatArrayOf(
+                        sensorData.accelerometer.x,
+                        sensorData.accelerometer.y,
+                        sensorData.accelerometer.z,
+                        sensorData.gravity.x,
+                        sensorData.gravity.y,
+                        sensorData.gravity.z,
+                        sensorData.magneticField.x,
+                        sensorData.magneticField.y,
+                        sensorData.magneticField.z
+                    )
+                }.toTypedArray()
+            }
     }
 
     private fun Flowable<Array<FloatArray>>.normalized(): Flowable<Array<FloatArray>> {
@@ -144,6 +148,44 @@ class GetFeatureActivity : AppCompatActivity() {
                                 }.toTypedArray()
                         }.toTypedArray()
                 }.toTypedArray()
+        }
+    }
+
+    private fun Flowable<Array<Array<Array<Float>>>>.obtainFeature(context: Context): Flowable<FloatArray> {
+        return map {
+            val options = Interpreter
+                .Options()
+                .apply {
+                    setNumThreads(4)
+                }
+            val model = FileUtil.loadMappedFile(context, "NAIVE-MINMAX-2D_model.tflite")
+            val interpreter = Interpreter(model, options)
+            val inputIndex = 0
+            val outputIndex = 0
+            val inputShape = interpreter.getInputTensor(inputIndex).shape() // {1, 25, 9, 1}
+            val inputDataType =
+                interpreter.getInputTensor(inputIndex).dataType()
+            val featureShape = interpreter.getOutputTensor(outputIndex).shape() // {1, 64}
+            val featureDataType =
+                interpreter.getOutputTensor(outputIndex).dataType()
+            val inputBuffer = TensorBuffer.createFixedSize(inputShape, inputDataType)
+            val outputBuffer = TensorBuffer.createFixedSize(featureShape, featureDataType)
+            val flatData = it.flatMap { oneD ->
+                oneD.toList()
+                    .flatMap { twoD ->
+                        twoD.toList()
+                    }
+            }.toFloatArray()
+            val cutoff = flatData.size % (25 * 9)
+            val inputArray = flatData.dropLast(cutoff).toFloatArray()
+
+            //sample size = 25 * 9  ->  ( 9 + 9 + ... + 9)
+            for (i in inputArray.indices step  25 * 9) {
+                val slice = inputArray.slice(IntRange(i, i + 25 * 9 - 1))
+                inputBuffer.loadArray(slice.toFloatArray())
+            }
+            interpreter.run(inputBuffer.buffer, outputBuffer.buffer.rewind())
+            outputBuffer.floatArray
         }
     }
 
