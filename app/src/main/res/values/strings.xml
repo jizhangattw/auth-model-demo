@@ -14,4 +14,5 @@
     <string name="language">language</string>
     <string name="confirm">确认</string>
     <string name="spike_trainOCSVM">Spike 训练OCSVM</string>
+    <string name="spike_predictOCSVM">Spike 预测OCSVM</string>
 </resources>

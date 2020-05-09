@@ -7,6 +7,7 @@ import com.thoughtworks.data.authmodeldemo.R
 import com.thoughtworks.data.authmodeldemo.spike.view.GenerateFeatureActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.GetFeatureActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.ParameterConfigActivity
+import com.thoughtworks.data.authmodeldemo.spike.view.PredictOCSVMActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.PythonCallerActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.ReshapeDataActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.SensorDataActivity
@@ -57,6 +58,11 @@ class MainActivity : AppCompatActivity() {
 
         trainOCSVMButton.setOnClickListener {
             val intent = Intent(this, TrainOCSVMActivity::class.java)
+            startActivity(intent)
+        }
+
+        predictOCSVMButton.setOnClickListener {
+            val intent = Intent(this, PredictOCSVMActivity::class.java)
             startActivity(intent)
         }
     }

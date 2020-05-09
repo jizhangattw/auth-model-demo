@@ -47,4 +47,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/spike_trainOCSVM" />
+
+    <Button
+        android:id="@+id/predictOCSVMButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/spike_predictOCSVM" />
 </LinearLayout>
