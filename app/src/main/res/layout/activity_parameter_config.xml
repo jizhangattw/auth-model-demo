@@ -112,8 +112,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="0.5" />
+            android:inputType="numberDecimal" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -134,13 +134,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="中文" />
+            android:inputType="textPersonName" />
 
     </LinearLayout>
 
     <Button
-        android:id="@+id/confirm_config"
+        android:id="@+id/confirmConfigButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/confirm" />
