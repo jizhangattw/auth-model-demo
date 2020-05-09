@@ -21,6 +21,7 @@ import io.reactivex.rxjava3.functions.Function3
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
@@ -40,9 +41,9 @@ class TrainOCSVMActivity : AppCompatActivity() {
             .reshapeData()
             .obtainFeature(this)
             .trainOCSVMModel()
-            .subscribe({
+            .subscribe {
                 Log.i(TAG, "success: $it")
-            })
+            }
     }
 
     private fun collectData(): Flowable<SensorData> {
@@ -130,8 +131,8 @@ class TrainOCSVMActivity : AppCompatActivity() {
                             twoD.toFloat()
                         }.toFloatArray()
                 }.toTypedArray()
-        }.doOnError {
-            throw Exception("null null null null null")
+        }.retryWhen {
+            it.retry()
         }
     }
 
