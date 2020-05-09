@@ -116,7 +116,7 @@ class ReshapeDataActivity : AppCompatActivity() {
 
     companion object {
         val TAG = ReshapeDataActivity::class.java.simpleName
-        const val TIME = 60
+        const val TIME = 4
         const val WINDOW_SIZE = 25
         const val STEP_SIZE = 25
     }

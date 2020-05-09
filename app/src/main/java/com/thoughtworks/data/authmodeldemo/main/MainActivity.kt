@@ -10,6 +10,7 @@ import com.thoughtworks.data.authmodeldemo.spike.view.ParameterConfigActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.PythonCallerActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.ReshapeDataActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.SensorDataActivity
+import com.thoughtworks.data.authmodeldemo.spike.view.TrainOCSVMActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -48,8 +49,14 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, GetFeatureActivity::class.java)
             startActivity(intent)
         }
+
         getParameterButton.setOnClickListener {
             val intent = Intent(this, ParameterConfigActivity::class.java)
+            startActivity(intent)
+        }
+
+        trainOCSVMButton.setOnClickListener {
+            val intent = Intent(this, TrainOCSVMActivity::class.java)
             startActivity(intent)
         }
     }
