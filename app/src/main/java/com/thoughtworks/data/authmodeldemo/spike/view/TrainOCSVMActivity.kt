@@ -50,7 +50,15 @@ class TrainOCSVMActivity : AppCompatActivity() {
     private fun listenGravitySensorByObserve() {
         collectData(10)
             .recordData()
+            .map {
+                writeToFile("before_normalized.json", Gson().toJson(it), this)
+                it
+            }
             .normalized()
+            .map {
+                writeToFile("after_normalized.json", Gson().toJson(it), this)
+                it
+            }
             .reshapeData()
             .obtainFeature(this)
             .trainOCSVMModel()
