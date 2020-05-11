@@ -5,25 +5,31 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.chaquo.python.Python
+import com.google.gson.Gson
 import com.thoughtworks.data.authmodeldemo.R
-import com.thoughtworks.data.authmodeldemo.main.util.ms
 import com.thoughtworks.data.authmodeldemo.spike.model.SensorData
 import com.thoughtworks.data.authmodeldemo.spike.model.Vector3
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.annotations.NonNull
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.FlowableOnSubscribe
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.functions.Function3
+import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_train_ocsvm.*
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
-import java.lang.RuntimeException
+import java.io.IOException
+import java.io.OutputStreamWriter
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
+
 
 class TrainOCSVMActivity : AppCompatActivity() {
 
@@ -32,47 +38,27 @@ class TrainOCSVMActivity : AppCompatActivity() {
         setContentView(R.layout.activity_train_ocsvm)
 
         listenGravitySensorByObserve()
+
+        Observable.interval(0, 1, TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                timerTextView.text = "time: $it/60"
+            }
     }
 
     private fun listenGravitySensorByObserve() {
-        collectData()
+        collectData(10)
             .recordData()
             .normalized()
             .reshapeData()
             .obtainFeature(this)
             .trainOCSVMModel()
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Log.i(TAG, "success: $it")
             }
-    }
-
-    private fun collectData(): Flowable<SensorData> {
-        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        val gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY)
-        val accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        val magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
-
-        val gravityFlowable = naiveObserveSensorChanged(sensorManager, gravitySensor, 100)
-        val accelerometerFlowable =
-            naiveObserveSensorChanged(sensorManager, accelerometerSensor, 100)
-        val magneticFieldFlowable =
-            naiveObserveSensorChanged(sensorManager, magneticFieldSensor, 100)
-
-        return Flowable.combineLatest<SensorEvent, SensorEvent, SensorEvent, SensorData>(
-            gravityFlowable,
-            accelerometerFlowable,
-            magneticFieldFlowable,
-            Function3<SensorEvent, SensorEvent, SensorEvent, SensorData> { gravitySensorEvent, accelerometerSensorEvent, magneticFieldSensorEvent ->
-                val timestamp =
-                    max(gravitySensorEvent.timestamp, accelerometerSensorEvent.timestamp)
-                SensorData(
-                    timestamp,
-                    Vector3(gravitySensorEvent.values),
-                    Vector3(accelerometerSensorEvent.values),
-                    Vector3(magneticFieldSensorEvent.values)
-                )
-            })
-            .sample(ms(100), TimeUnit.MILLISECONDS)
     }
 
     private fun naiveObserveSensorChanged(
@@ -89,18 +75,60 @@ class TrainOCSVMActivity : AppCompatActivity() {
                     it.onNext(event)
                 }
             }
-            sensorManager.registerListener(listener, sensor, samplingPeriodUs)
+            sensorManager.registerListener(listener, sensor, samplingPeriodUs, samplingPeriodUs)
         }, BackpressureStrategy.BUFFER)
     }
 
+    private fun collectData(sampling: Int): Flowable<SensorData> {
+        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY)
+        val accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        val magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+
+        val gravityFlowable = naiveObserveSensorChanged(
+            sensorManager,
+            gravitySensor,
+            sampling
+        )
+        val accelerometerFlowable =
+            naiveObserveSensorChanged(
+                sensorManager,
+                accelerometerSensor,
+                sampling
+            )
+        val magneticFieldFlowable =
+            naiveObserveSensorChanged(
+                sensorManager,
+                magneticFieldSensor,
+                sampling
+            )
+
+        return Flowable.combineLatest<SensorEvent, SensorEvent, SensorEvent, SensorData>(
+            gravityFlowable,
+            accelerometerFlowable,
+            magneticFieldFlowable,
+            Function3<SensorEvent, SensorEvent, SensorEvent, SensorData> { gravitySensorEvent, accelerometerSensorEvent, magneticFieldSensorEvent ->
+                val timestamp =
+                    max(gravitySensorEvent.timestamp, accelerometerSensorEvent.timestamp)
+                SensorData(
+                    timestamp,
+                    Vector3(gravitySensorEvent.values),
+                    Vector3(accelerometerSensorEvent.values),
+                    Vector3(magneticFieldSensorEvent.values)
+                )
+            })
+            .sample(sampling.toLong(), TimeUnit.MILLISECONDS)
+    }
+
     private fun Flowable<SensorData>.recordData(): Flowable<Array<FloatArray>> {
-        return buffer(SensorDataActivity.AVERAGE_COUNT)
+        return buffer(100 / 25)
+            // average data
             .map {
                 it.reduce { acc, sensorData ->
                     acc + sensorData
                 } / SensorDataActivity.AVERAGE_COUNT.toLong()
             }
-            .buffer(ms(25).toInt() * ReshapeDataActivity.TIME)
+            .buffer(25 * 60)
             .map { list ->
                 list.map { sensorData ->
                     floatArrayOf(
@@ -122,17 +150,9 @@ class TrainOCSVMActivity : AppCompatActivity() {
         return map {
             val python = Python.getInstance()
             val result = python.getModule("scale_data").callAttr(
-                "scale_data", it
+                "scale_data", it, false, true
             )
-            result.asList()
-                .map { oneD ->
-                    oneD.asList()
-                        .map { twoD ->
-                            twoD.toFloat()
-                        }.toFloatArray()
-                }.toTypedArray()
-        }.retryWhen {
-            it.retry()
+            result.toJava(Array<FloatArray>::class.java)
         }
     }
 
@@ -143,20 +163,11 @@ class TrainOCSVMActivity : AppCompatActivity() {
                 "reshape", it, ReshapeDataActivity.WINDOW_SIZE,
                 ReshapeDataActivity.STEP_SIZE
             )
-            result.asList()
-                .map { oneD ->
-                    oneD.asList()
-                        .map { twoD ->
-                            twoD.asList()
-                                .map { threeD ->
-                                    threeD.toFloat()
-                                }.toTypedArray()
-                        }.toTypedArray()
-                }.toTypedArray()
+            result.toJava(Array<Array<Array<Float>>>::class.java)
         }
     }
 
-    private fun Flowable<Array<Array<Array<Float>>>>.obtainFeature(context: Context): Flowable<FloatArray> {
+    private fun Flowable<Array<Array<Array<Float>>>>.obtainFeature(context: Context): Flowable<Array<FloatArray>> {
         return map {
             val options = Interpreter
                 .Options()
@@ -176,34 +187,53 @@ class TrainOCSVMActivity : AppCompatActivity() {
             val inputBuffer = TensorBuffer.createFixedSize(inputShape, inputDataType)
             val outputBuffer = TensorBuffer.createFixedSize(featureShape, featureDataType)
             val flatData = it.flatMap { oneD ->
-                oneD.toList()
+                oneD.asList()
                     .flatMap { twoD ->
-                        twoD.toList()
+                        twoD.asList()
                     }
             }.toFloatArray()
             val sampleSize = 25 * 9 //sample size = 25 * 9  ->  ( 9 + 9 + ... + 9)
             val cutoff = flatData.size % sampleSize
             val inputArray = flatData.dropLast(cutoff).toFloatArray()
+
+            var x = arrayOf<FloatArray>()
             for (i in inputArray.indices step sampleSize) {
                 val slice = inputArray.slice(IntRange(i, i + sampleSize - 1))
                 inputBuffer.loadArray(slice.toFloatArray())
+                interpreter.run(inputBuffer.buffer, outputBuffer.buffer.rewind())
+                x += outputBuffer.floatArray
             }
-            interpreter.run(inputBuffer.buffer, outputBuffer.buffer.rewind())
-            outputBuffer.floatArray
+            x
         }
     }
 
-    private fun Flowable<FloatArray>.trainOCSVMModel(): Flowable<Boolean> {
-        return buffer(3)
-            .map {
+    private fun Flowable<Array<FloatArray>>.trainOCSVMModel(): Flowable<Boolean> {
+        return map {
                 val python = Python.getInstance()
-
                 python.getModule("testSklearn").callAttr(
-                    "train_and_save_model", it.toTypedArray()
+                    "train_and_save_model", it
                 )
-
                 true
             }
+    }
+
+    private fun writeToFile(
+        name: String,
+        data: String,
+        context: Context
+    ) {
+        try {
+            val outputStreamWriter = OutputStreamWriter(
+                context.openFileOutput(
+                    name,
+                    Context.MODE_PRIVATE
+                )
+            )
+            outputStreamWriter.write(data)
+            outputStreamWriter.close()
+        } catch (e: IOException) {
+            Log.e("Exception", "File write failed: " + e.toString())
+        }
     }
 
     companion object {

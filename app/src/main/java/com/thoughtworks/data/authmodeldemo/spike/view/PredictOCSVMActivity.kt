@@ -50,11 +50,11 @@ class PredictOCSVMActivity : AppCompatActivity() {
         val accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         val magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
 
-        val gravityFlowable = naiveObserveSensorChanged(sensorManager, gravitySensor, 100)
+        val gravityFlowable = naiveObserveSensorChanged(sensorManager, gravitySensor, SensorManager.SENSOR_DELAY_FASTEST)
         val accelerometerFlowable =
-            naiveObserveSensorChanged(sensorManager, accelerometerSensor, 100)
+            naiveObserveSensorChanged(sensorManager, accelerometerSensor, SensorManager.SENSOR_DELAY_FASTEST)
         val magneticFieldFlowable =
-            naiveObserveSensorChanged(sensorManager, magneticFieldSensor, 100)
+            naiveObserveSensorChanged(sensorManager, magneticFieldSensor, SensorManager.SENSOR_DELAY_FASTEST)
 
         return Flowable.combineLatest<SensorEvent, SensorEvent, SensorEvent, SensorData>(
             gravityFlowable,
@@ -70,7 +70,7 @@ class PredictOCSVMActivity : AppCompatActivity() {
                     Vector3(magneticFieldSensorEvent.values)
                 )
             })
-            .sample(ms(100), TimeUnit.MILLISECONDS)
+            .sample(ms(100), TimeUnit.MILLISECONDS, true)
     }
 
     private fun naiveObserveSensorChanged(
@@ -87,18 +87,18 @@ class PredictOCSVMActivity : AppCompatActivity() {
                     it.onNext(event)
                 }
             }
-            sensorManager.registerListener(listener, sensor, samplingPeriodUs)
+            sensorManager.registerListener(listener, sensor, samplingPeriodUs, samplingPeriodUs)
         }, BackpressureStrategy.BUFFER)
     }
 
     private fun Flowable<SensorData>.recordData(): Flowable<Array<FloatArray>> {
-        return buffer(SensorDataActivity.AVERAGE_COUNT)
+        return buffer(100 / 25)
             .map {
                 it.reduce { acc, sensorData ->
                     acc + sensorData
                 } / SensorDataActivity.AVERAGE_COUNT.toLong()
             }
-            .buffer(ms(25).toInt() * ReshapeDataActivity.TIME)
+            .buffer(ReshapeDataActivity.TIME)
             .map { list ->
                 list.map { sensorData ->
                     floatArrayOf(
@@ -120,7 +120,7 @@ class PredictOCSVMActivity : AppCompatActivity() {
         return map {
             val python = Python.getInstance()
             val result = python.getModule("scale_data").callAttr(
-                "scale_data", it
+                "scale_data", it, true, false
             )
             result.asList()
                 .map { oneD ->
