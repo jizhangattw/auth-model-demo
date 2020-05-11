@@ -14,9 +14,10 @@ def _scale_data(X, data_min_=None, data_max_=None, save_scaler=False):
         if save_scaler:
             np.save(join(dirname(__file__),"scaler.npy"), np.vstack((scaler.data_min_, scaler.data_max_)))
 
-    if np.all(scaled_data >= 0) and np.all(scaled_data <= 1):
+    if np.all(scaled_data >= -0.001) and np.all(scaled_data <= 1.001):
         return scaled_data
     else:
+        np.save(join(dirname(__file__),"null.npy"),scaled_data)
         return None
 
 
