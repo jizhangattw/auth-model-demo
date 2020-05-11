@@ -13,10 +13,14 @@ import com.thoughtworks.data.authmodeldemo.R
 import com.thoughtworks.data.authmodeldemo.main.util.ms
 import com.thoughtworks.data.authmodeldemo.spike.model.SensorData
 import com.thoughtworks.data.authmodeldemo.spike.model.Vector3
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.FlowableOnSubscribe
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.functions.Function3
+import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_train_ocsvm.*
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
@@ -30,31 +34,41 @@ class PredictOCSVMActivity : AppCompatActivity() {
         setContentView(R.layout.activity_predict_ocsvm)
 
         listenGravitySensorByObserve()
+
+        Observable.interval(0, 1, TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                timerTextView.text = "time: $it/60"
+            }
     }
 
     private fun listenGravitySensorByObserve() {
-        collectData()
+        collectData(10)
             .recordData()
             .normalized()
             .reshapeData()
             .obtainFeature(this)
             .predictOCSVMModel()
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                resultTextView.text = "predict result: ${ if (it) "Match" else "Not Match" }"
                 Log.i(TAG, "success: $it")
             }
     }
 
-    private fun collectData(): Flowable<SensorData> {
+    private fun collectData(sampling: Int): Flowable<SensorData> {
         val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY)
         val accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         val magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
 
-        val gravityFlowable = naiveObserveSensorChanged(sensorManager, gravitySensor, SensorManager.SENSOR_DELAY_FASTEST)
+        val gravityFlowable = naiveObserveSensorChanged(sensorManager, gravitySensor, sampling)
         val accelerometerFlowable =
-            naiveObserveSensorChanged(sensorManager, accelerometerSensor, SensorManager.SENSOR_DELAY_FASTEST)
+            naiveObserveSensorChanged(sensorManager, accelerometerSensor, sampling)
         val magneticFieldFlowable =
-            naiveObserveSensorChanged(sensorManager, magneticFieldSensor, SensorManager.SENSOR_DELAY_FASTEST)
+            naiveObserveSensorChanged(sensorManager, magneticFieldSensor, sampling)
 
         return Flowable.combineLatest<SensorEvent, SensorEvent, SensorEvent, SensorData>(
             gravityFlowable,
@@ -98,7 +112,7 @@ class PredictOCSVMActivity : AppCompatActivity() {
                     acc + sensorData
                 } / SensorDataActivity.AVERAGE_COUNT.toLong()
             }
-            .buffer(ReshapeDataActivity.TIME)
+            .buffer(25 * 60)
             .map { list ->
                 list.map { sensorData ->
                     floatArrayOf(
@@ -122,13 +136,7 @@ class PredictOCSVMActivity : AppCompatActivity() {
             val result = python.getModule("scale_data").callAttr(
                 "scale_data", it, true, false
             )
-            result.asList()
-                .map { oneD ->
-                    oneD.asList()
-                        .map { twoD ->
-                            twoD.toFloat()
-                        }.toFloatArray()
-                }.toTypedArray()
+            result.toJava(Array<FloatArray>::class.java)
         }.retryWhen {
             it.retry()
         }
@@ -141,20 +149,11 @@ class PredictOCSVMActivity : AppCompatActivity() {
                 "reshape", it, ReshapeDataActivity.WINDOW_SIZE,
                 ReshapeDataActivity.STEP_SIZE
             )
-            result.asList()
-                .map { oneD ->
-                    oneD.asList()
-                        .map { twoD ->
-                            twoD.asList()
-                                .map { threeD ->
-                                    threeD.toFloat()
-                                }.toTypedArray()
-                        }.toTypedArray()
-                }.toTypedArray()
+            result.toJava(Array<Array<Array<Float>>>::class.java)
         }
     }
 
-    private fun Flowable<Array<Array<Array<Float>>>>.obtainFeature(context: Context): Flowable<FloatArray> {
+    private fun Flowable<Array<Array<Array<Float>>>>.obtainFeature(context: Context): Flowable<Array<FloatArray>> {
         return map {
             val options = Interpreter
                 .Options()
@@ -182,22 +181,24 @@ class PredictOCSVMActivity : AppCompatActivity() {
             val sampleSize = 25 * 9 //sample size = 25 * 9  ->  ( 9 + 9 + ... + 9)
             val cutoff = flatData.size % sampleSize
             val inputArray = flatData.dropLast(cutoff).toFloatArray()
+            var x = arrayOf<FloatArray>()
             for (i in inputArray.indices step sampleSize) {
                 val slice = inputArray.slice(IntRange(i, i + sampleSize - 1))
                 inputBuffer.loadArray(slice.toFloatArray())
+                interpreter.run(inputBuffer.buffer, outputBuffer.buffer.rewind())
+                outputBuffer.floatArray
+                x += outputBuffer.floatArray
             }
-            interpreter.run(inputBuffer.buffer, outputBuffer.buffer.rewind())
-            outputBuffer.floatArray
+            x
         }
     }
 
-    private fun Flowable<FloatArray>.predictOCSVMModel(): Flowable<Boolean> {
-        return buffer(3)
-            .map { list ->
+    private fun Flowable<Array<FloatArray>>.predictOCSVMModel(): Flowable<Boolean> {
+        return map { list ->
                 val python = Python.getInstance()
 
                 val result = python.getModule("testSklearn").callAttr(
-                    "predict", list.toTypedArray()
+                    "predict", list
                 )
 
                 result
