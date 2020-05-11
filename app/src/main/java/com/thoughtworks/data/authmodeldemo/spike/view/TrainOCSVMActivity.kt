@@ -65,6 +65,7 @@ class TrainOCSVMActivity : AppCompatActivity() {
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                resultTextView.text = "train success & save ocsvm success"
                 Log.i(TAG, "success: $it")
             }
     }
