@@ -18,7 +18,13 @@
     <string name="sign_up">注册</string>
     <string name="hello_for_not_log_in">你好, 还没有登陆哟。</string>
     <string name="waiting_for_typing_start">等待输入开始</string>
-    <string name="go_on_for_typing">请继续输入，大概进度%d</string>
+    <string name="go_on_for_typing">请继续输入，大概进度%d%%</string>
     <string name="typing_done">完成注册</string>
     <string name="please_type_text">请按照上面给出的文字进行输入，直到下面注册按钮可用并提示完成注册。</string>
+    <string-array name="preview_text">
+        <item>敏捷宣言强调的敏捷软件开发的四个核心价值是：个体和互动高于流程和工具，工作的软件高于详尽的文档，客户合作高于合同谈判，响应变化高于遵循计划。</item>
+        <item>无论我们发现了什么，考虑到当时的已知情况、个人的技术水平和能力、可用的资源，以及手上的状况，我们理解并坚信：每个人对自己的工作都已全力以赴。</item>
+        <item>我们要基于事实和行为的，而不是态度或价值，我们的观察是主观的，必须抛开所有的偏见才能够在回顾的过程中学习到哪些是可以做得更好的，才能建立团队间彼此的信任。</item>
+        <item>对于已经发生的事情，不可能靠批判或埋怨达到解决的目的，相反的，我们要学会如何从中吸取教训，并持续改进。</item>
+    </string-array>
 </resources>
