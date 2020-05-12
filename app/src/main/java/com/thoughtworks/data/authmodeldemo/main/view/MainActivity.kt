@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.thoughtworks.data.authmodeldemo.R
+import com.thoughtworks.data.authmodeldemo.signup.view.SignUpActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.GenerateFeatureActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.GetFeatureActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.ParameterConfigActivity

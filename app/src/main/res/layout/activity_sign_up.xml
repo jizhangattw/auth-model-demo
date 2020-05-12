@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.view.SignUpActivity">
+    tools:context=".signup.view.SignUpActivity">
 
     <Button
         android:id="@+id/signUpButton"
@@ -12,9 +12,34 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="@string/sign_up"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/typingEditText" />
+
+    <TextView
+        android:id="@+id/previewTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/typingEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:focusedByDefault="false"
+        android:gravity="start|top"
+        android:hint="@string/please_type_text"
+        android:inputType="textMultiLine"
+        android:minLines="5"
+        android:singleLine="false"
+        app:layout_constraintEnd_toEndOf="@+id/previewTextView"
+        app:layout_constraintStart_toStartOf="@+id/previewTextView"
+        app:layout_constraintTop_toBottomOf="@+id/previewTextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

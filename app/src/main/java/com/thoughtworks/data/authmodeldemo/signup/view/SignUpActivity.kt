@@ -11,6 +11,8 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
         title = getString(R.string.sign_up)
+        signUpButton.text = getString(R.string.waiting_for_typing_start)
+        signUpButton.isEnabled = false
 
         signUpButton.setOnClickListener {
             finish()
