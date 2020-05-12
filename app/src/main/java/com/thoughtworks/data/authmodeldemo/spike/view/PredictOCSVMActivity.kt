@@ -52,10 +52,12 @@ class PredictOCSVMActivity : AppCompatActivity() {
             .predictOCSVMModel()
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribe({
                 resultTextView.text = "predict result: ${ if (it) "Match" else "Not Match" }"
                 Log.i(TAG, "success: $it")
-            }
+            }, {
+                resultTextView.text = "predict result: ${it.localizedMessage}"
+            })
     }
 
     private fun collectData(sampling: Int): Flowable<SensorData> {
@@ -112,7 +114,7 @@ class PredictOCSVMActivity : AppCompatActivity() {
                     acc + sensorData
                 } / SensorDataActivity.AVERAGE_COUNT.toLong()
             }
-            .buffer(25 * 60)
+            .buffer(25 * 10)
             .map { list ->
                 list.map { sensorData ->
                     floatArrayOf(
@@ -133,13 +135,16 @@ class PredictOCSVMActivity : AppCompatActivity() {
     private fun Flowable<Array<FloatArray>>.normalized(): Flowable<Array<FloatArray>> {
         return map {
             val python = Python.getInstance()
-            val result = python.getModule("scale_data").callAttr(
-                "scale_data", it, true, false
-            )
-            result.toJava(Array<FloatArray>::class.java)
-        }.retryWhen {
-            it.retry()
+            try {
+                val result = python.getModule("scale_data").callAttr(
+                    "scale_data", it, true, false
+                )
+                result.toJava(Array<FloatArray>::class.java)
+            } catch (throwable: Throwable) {
+                throw throwable
+            }
         }
+            .retryWhen { it.retry() }
     }
 
     private fun Flowable<Array<FloatArray>>.reshapeData(): Flowable<Array<Array<Array<Float>>>> {

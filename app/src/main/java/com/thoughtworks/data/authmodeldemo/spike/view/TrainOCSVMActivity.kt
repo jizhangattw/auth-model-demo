@@ -65,7 +65,7 @@ class TrainOCSVMActivity : AppCompatActivity() {
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                resultTextView.text = "train success & save ocsvm success"
+                resultTextView.text = "${if (it) "train success & save ocsvm success" else "train failure & save ocsvm failure"}"
                 Log.i(TAG, "success: $it")
             }
     }
@@ -218,12 +218,18 @@ class TrainOCSVMActivity : AppCompatActivity() {
 
     private fun Flowable<Array<FloatArray>>.trainOCSVMModel(): Flowable<Boolean> {
         return map {
-                val python = Python.getInstance()
+            var result = false
+            val python = Python.getInstance()
+            try {
                 python.getModule("testSklearn").callAttr(
                     "train_and_save_model", it
                 )
-                true
+                result = true
+            } catch (throwable: Throwable) {
+                result = false
             }
+            result
+        }
     }
 
     private fun writeToFile(
