@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.thoughtworks.data.authmodeldemo.R
-import com.thoughtworks.data.authmodeldemo.main.MainActivity
+import com.thoughtworks.data.authmodeldemo.main.view.MainActivity
 import kotlinx.android.synthetic.main.activity_parameter_config.*
 
 

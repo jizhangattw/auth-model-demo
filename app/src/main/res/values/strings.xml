@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Auth Model Demo</string>
+    <string name="app_name">验证模型MVP</string>
     <string name="spike_sensor_data_collection">Spike Sensor数据采集</string>
     <string name="spike_feature">Spike 特征生成</string>
     <string name="spike_reshapeData">Spike 数据分段</string>
@@ -15,4 +15,6 @@
     <string name="confirm">确认</string>
     <string name="spike_trainOCSVM">Spike 训练OCSVM</string>
     <string name="spike_predictOCSVM">Spike 预测OCSVM</string>
+    <string name="sign_up">注册</string>
+    <string name="hello_for_not_log_in">你好, 还没有登陆哟。</string>
 </resources>

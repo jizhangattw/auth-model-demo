@@ -14,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".main.view.SignUpActivity" />
         <activity android:name=".spike.view.PredictOCSVMActivity" />
         <activity android:name=".spike.view.TrainOCSVMActivity" />
         <activity android:name=".spike.view.GetFeatureActivity" />
@@ -22,7 +23,7 @@
         <activity android:name=".spike.view.SensorDataActivity" />
         <activity android:name=".spike.view.GenerateFeatureActivity" />
         <activity android:name=".spike.view.ParameterConfigActivity" />
-        <activity android:name=".main.MainActivity">
+        <activity android:name=".main.view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

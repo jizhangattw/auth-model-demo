@@ -1,4 +1,4 @@
-package com.thoughtworks.data.authmodeldemo.main
+package com.thoughtworks.data.authmodeldemo.main.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -20,12 +20,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        helloMessageTextView.text = getString(R.string.hello_for_not_log_in)
         setupEvent()
 
         title = getString(R.string.app_name)
     }
 
     private fun setupEvent() {
+        signUpButton.setOnClickListener {
+            val intent = Intent(this, SignUpActivity::class.java)
+            startActivity(intent)
+        }
+
         spikeSensorDataCollectionButton.setOnClickListener {
             val intent = Intent(this, SensorDataActivity::class.java)
             startActivity(intent)
