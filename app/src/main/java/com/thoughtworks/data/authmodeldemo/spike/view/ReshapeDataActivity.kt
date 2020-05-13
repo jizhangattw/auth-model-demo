@@ -10,7 +10,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.chaquo.python.Python
 import com.thoughtworks.data.authmodeldemo.R
-import com.thoughtworks.data.authmodeldemo.main.util.ms
+import com.thoughtworks.data.authmodeldemo.common.util.hzToMillisecond
 import com.thoughtworks.data.authmodeldemo.spike.model.SensorData
 import com.thoughtworks.data.authmodeldemo.spike.model.Vector3
 import io.reactivex.rxjava3.core.BackpressureStrategy
@@ -61,7 +61,7 @@ class ReshapeDataActivity : AppCompatActivity() {
                 })
 
         sensorChangedFlowable
-            .sample(ms(100), TimeUnit.MILLISECONDS)
+            .sample(hzToMillisecond(100L), TimeUnit.MILLISECONDS)
             // calculate average value
             .buffer(SensorDataActivity.AVERAGE_COUNT)
             .map {
@@ -70,7 +70,7 @@ class ReshapeDataActivity : AppCompatActivity() {
                 } / SensorDataActivity.AVERAGE_COUNT.toLong()
             }
             // collect data more
-            .buffer(ms(25).toInt() * TIME)
+            .buffer(hzToMillisecond(25) * TIME)
             // to 2d float array
             .map {
                 it.map {

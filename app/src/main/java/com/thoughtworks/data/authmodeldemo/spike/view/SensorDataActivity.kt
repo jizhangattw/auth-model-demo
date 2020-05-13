@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.thoughtworks.data.authmodeldemo.R
-import com.thoughtworks.data.authmodeldemo.main.util.ms
+import com.thoughtworks.data.authmodeldemo.common.util.hzToMillisecond
 import com.thoughtworks.data.authmodeldemo.spike.model.SensorData
 import com.thoughtworks.data.authmodeldemo.spike.model.Vector3
 import io.reactivex.rxjava3.core.BackpressureStrategy
@@ -57,7 +57,7 @@ class SensorDataActivity : AppCompatActivity() {
                 })
 
         sensorChangedFlowable
-            .sample(ms(100), TimeUnit.MILLISECONDS)
+            .sample(hzToMillisecond(100L), TimeUnit.MILLISECONDS)
             .buffer(AVERAGE_COUNT)
             .subscribe {
                 val sensorAverageData = it.reduce { acc, sensorData ->

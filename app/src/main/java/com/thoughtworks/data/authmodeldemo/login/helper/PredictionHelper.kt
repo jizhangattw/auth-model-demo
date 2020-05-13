@@ -10,6 +10,7 @@ import com.thoughtworks.data.authmodeldemo.common.helper.normalized
 import com.thoughtworks.data.authmodeldemo.common.helper.obtainFeature
 import com.thoughtworks.data.authmodeldemo.common.helper.recordData
 import com.thoughtworks.data.authmodeldemo.common.helper.reshapeData
+import com.thoughtworks.data.authmodeldemo.common.util.hzToMillisecond
 import com.thoughtworks.data.authmodeldemo.parameterconfig.helper.ConfigurationHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
@@ -19,7 +20,7 @@ fun startPrediction(context: Context): Flowable<Boolean> {
     val configurationHelper = ConfigurationHelper(context)
     val executeCount: Long = 1
 
-    return collectData(10, context)
+    return collectData(hzToMillisecond(100), context)
         .recordData(configurationHelper.detectDelay)
         .doOnNext {
             backupData("before_normalized.json", Gson().toJson(it), context)

@@ -10,7 +10,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.chaquo.python.Python
 import com.thoughtworks.data.authmodeldemo.R
-import com.thoughtworks.data.authmodeldemo.main.util.ms
+import com.thoughtworks.data.authmodeldemo.common.util.hzToMillisecond
 import com.thoughtworks.data.authmodeldemo.spike.model.SensorData
 import com.thoughtworks.data.authmodeldemo.spike.model.Vector3
 import io.reactivex.rxjava3.core.BackpressureStrategy
@@ -69,7 +69,7 @@ class GetFeatureActivity : AppCompatActivity() {
                     Vector3(magneticFieldSensorEvent.values)
                 )
             })
-            .sample(ms(100), TimeUnit.MILLISECONDS)
+            .sample(hzToMillisecond(100L), TimeUnit.MILLISECONDS)
     }
 
     private fun naiveObserveSensorChanged(
@@ -97,7 +97,7 @@ class GetFeatureActivity : AppCompatActivity() {
                     acc + sensorData
                 } / SensorDataActivity.AVERAGE_COUNT.toLong()
             }
-            .buffer(ms(25).toInt() * ReshapeDataActivity.TIME)
+            .buffer(hzToMillisecond(25) * ReshapeDataActivity.TIME)
             .map { list ->
                 list.map { sensorData ->
                     floatArrayOf(
