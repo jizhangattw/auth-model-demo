@@ -65,8 +65,7 @@ class LogInActivity : AppCompatActivity() {
     }
 
     private fun displayPreviewByRandom() {
-        val random = (0..3).random()
-        previewTextView.text = resources.getStringArray(R.array.preview_text)[random]
+        previewTextView.text = getString(R.string.preview_text)
     }
 
     private fun disableLogInButton() {
