@@ -9,11 +9,13 @@ import com.thoughtworks.data.authmodeldemo.common.helper.normalized
 import com.thoughtworks.data.authmodeldemo.common.helper.obtainFeature
 import com.thoughtworks.data.authmodeldemo.common.helper.recordData
 import com.thoughtworks.data.authmodeldemo.common.helper.reshapeData
+import com.thoughtworks.data.authmodeldemo.parameterconfig.helper.ConfigurationHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 fun startTraining(context: Context): Flowable<Boolean> {
+    val configurationHelper = ConfigurationHelper(context)
     return collectData(10, context)
         .recordData(90)
         .doOnNext {

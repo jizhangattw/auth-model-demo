@@ -1,6 +1,7 @@
 package com.thoughtworks.data.authmodeldemo.spike.view
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -48,6 +49,8 @@ class TrainOCSVMActivity : AppCompatActivity() {
     }
 
     private fun listenGravitySensorByObserve() {
+        val sharedPreferences: SharedPreferences = getPreferences(Context.MODE_PRIVATE)
+
         collectData(10)
             .recordData()
             .map {

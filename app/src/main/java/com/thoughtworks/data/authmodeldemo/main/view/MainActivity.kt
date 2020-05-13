@@ -8,7 +8,7 @@ import com.thoughtworks.data.authmodeldemo.login.view.LogInActivity
 import com.thoughtworks.data.authmodeldemo.signup.view.SignUpActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.GenerateFeatureActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.GetFeatureActivity
-import com.thoughtworks.data.authmodeldemo.spike.view.ParameterConfigActivity
+import com.thoughtworks.data.authmodeldemo.parameterconfig.view.ParameterConfigActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.PredictOCSVMActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.PythonCallerActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.ReshapeDataActivity

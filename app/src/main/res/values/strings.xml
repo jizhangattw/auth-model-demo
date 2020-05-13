@@ -11,7 +11,7 @@
     <string name="gamma">gamma</string>
     <string name="detect_delay">detect_delay</string>
     <string name="threshold">threshold</string>
-    <string name="language">language</string>
+    <string name="english_language_toggle">英文语言开关</string>
     <string name="confirm">确认</string>
     <string name="spike_trainOCSVM">Spike 训练OCSVM</string>
     <string name="spike_predictOCSVM">Spike 预测OCSVM</string>
