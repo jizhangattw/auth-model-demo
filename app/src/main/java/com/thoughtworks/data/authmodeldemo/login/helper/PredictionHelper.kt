@@ -1,4 +1,4 @@
-package com.thoughtworks.data.authmodeldemo.signup.helper
+package com.thoughtworks.data.authmodeldemo.login.helper
 
 import android.content.Context
 import com.chaquo.python.Python
@@ -13,9 +13,9 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-fun startTraining(context: Context): Flowable<Boolean> {
+fun startPrediction(context: Context): Flowable<Boolean> {
     return collectData(10, context)
-        .recordData(90)
+        .recordData(10)
         .doOnNext {
             backupData("before_normalized.json", Gson().toJson(it), context)
         }
@@ -26,23 +26,26 @@ fun startTraining(context: Context): Flowable<Boolean> {
         }
         .reshapeData(25, 25)
         .obtainFeature(context)
-        .trainOCSVMModel()
+        .predictOCSVMModel()
         .subscribeOn(Schedulers.computation())
         .observeOn(AndroidSchedulers.mainThread())
 }
 
-private fun Flowable<Array<FloatArray>>.trainOCSVMModel(): Flowable<Boolean> {
-    return map {
-        var result = false
+private fun Flowable<Array<FloatArray>>.predictOCSVMModel(): Flowable<Boolean> {
+    return map { list ->
         val python = Python.getInstance()
-        try {
-            python.getModule("testSklearn").callAttr(
-                "train_and_save_model", it
-            )
-            result = true
-        } catch (throwable: Throwable) {
-            result = false
-        }
+
+        val result = python.getModule("testSklearn").callAttr(
+            "predict", list
+        )
+
         result
+            .asList()
+            .toTypedArray()
+            .map { it.toString().toInt() }
+            .filter {
+                it.toInt() != -1
+            }
+            .average() > 0.5
     }
 }

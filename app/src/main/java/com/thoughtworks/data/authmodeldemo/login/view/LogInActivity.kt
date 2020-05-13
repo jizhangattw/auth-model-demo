@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.thoughtworks.data.authmodeldemo.R
+import com.thoughtworks.data.authmodeldemo.login.helper.startPrediction
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -34,6 +35,12 @@ class LogInActivity : AppCompatActivity() {
             }
             .subscribe {
                 updateProgress()
+                startPrediction(this)
+                    .subscribe {
+                        logInButton.isEnabled = it
+                        logInButton.text = if (it) getString(R.string.log_in_allow) else getString(R.string.log_in_disable)
+                    }
+                    .addTo(disposable)
             }
     }
 

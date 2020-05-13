@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.thoughtworks.data.authmodeldemo.R
-import com.thoughtworks.data.authmodeldemo.signup.helper.TrainingHelper
+import com.thoughtworks.data.authmodeldemo.signup.helper.startTraining
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit
 class SignUpActivity : AppCompatActivity() {
 
     private val disposable = CompositeDisposable()
-    private val trainingHelper = TrainingHelper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +60,7 @@ class SignUpActivity : AppCompatActivity() {
             }
             .subscribe {
                 updateProgress()
-                trainingHelper.start(this)
+                startTraining(this)
                     .subscribe {
                         signUpButton.isEnabled = true
                         signUpButton.text = getString(R.string.typing_done)
