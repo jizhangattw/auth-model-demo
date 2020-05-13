@@ -3,6 +3,7 @@ package com.thoughtworks.data.authmodeldemo.signup.helper
 import android.content.Context
 import com.chaquo.python.Python
 import com.google.gson.Gson
+import com.thoughtworks.data.authmodeldemo.common.helper.aiWindowSize
 import com.thoughtworks.data.authmodeldemo.common.helper.backupData
 import com.thoughtworks.data.authmodeldemo.common.helper.collectData
 import com.thoughtworks.data.authmodeldemo.common.helper.normalized
@@ -16,8 +17,10 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 
 fun startTraining(context: Context): Flowable<Boolean> {
     val configurationHelper = ConfigurationHelper(context)
+    val executeCount: Long = 1
+
     return collectData(10, context)
-        .recordData(90)
+        .recordData(configurationHelper.trainDelay)
         .doOnNext {
             backupData("before_normalized.json", Gson().toJson(it), context)
         }
@@ -25,20 +28,22 @@ fun startTraining(context: Context): Flowable<Boolean> {
         .doOnNext {
             backupData("after_normalized.json", Gson().toJson(it), context)
         }
-        .reshapeData(25, 25)
+        .reshapeData(aiWindowSize, aiWindowSize)
         .obtainFeature(context)
-        .trainOCSVMModel()
-        .take(1)
+        .trainOCSVMModel(context)
+        .take(executeCount)
         .subscribeOn(Schedulers.computation())
         .observeOn(AndroidSchedulers.mainThread())
 }
 
-private fun Flowable<Array<FloatArray>>.trainOCSVMModel(): Flowable<Boolean> {
+private fun Flowable<Array<FloatArray>>.trainOCSVMModel(context: Context): Flowable<Boolean> {
+    val configurationHelper = ConfigurationHelper(context)
+
     return map {
         val python = Python.getInstance()
         try {
             python.getModule("testSklearn").callAttr(
-                "train_and_save_model", it
+                "train_and_save_model", it, configurationHelper.nu, configurationHelper.gamma
             )
             true
         } catch (throwable: Throwable) {

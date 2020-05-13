@@ -35,7 +35,7 @@ class ParameterConfigActivity : AppCompatActivity() {
 
     private fun saveCurrentParameter() {
         val trainDelayInputEdit = findViewById<View>(R.id.train_delay_input) as EditText
-        configurationHelper.trainDelay = trainDelayInputEdit.text.toString().toFloat()
+        configurationHelper.trainDelay = trainDelayInputEdit.text.toString().toInt()
 
         val nuInputEdit = findViewById<View>(R.id.nu_input) as EditText
         configurationHelper.nu = nuInputEdit.text.toString().toFloat()
@@ -44,7 +44,7 @@ class ParameterConfigActivity : AppCompatActivity() {
         configurationHelper.gamma = gammaInputEdit.text.toString().toFloat()
 
         val detectDelayInputEdit = findViewById<View>(R.id.detect_delay_input) as EditText
-        configurationHelper.detectDelay = detectDelayInputEdit.text.toString().toFloat()
+        configurationHelper.detectDelay = detectDelayInputEdit.text.toString().toInt()
 
         val thresholdInputEdit = findViewById<View>(R.id.threshold_input) as EditText
         configurationHelper.threshold = thresholdInputEdit.text.toString().toFloat()

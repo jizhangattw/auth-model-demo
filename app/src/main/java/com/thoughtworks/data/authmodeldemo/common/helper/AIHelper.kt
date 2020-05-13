@@ -19,6 +19,9 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
+val aiRecordAverageSize = 4
+val aiWindowSize = 25
+
 fun collectData(sampling: Int, context: Context): Flowable<SensorData> {
     val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     val gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY)
@@ -61,14 +64,14 @@ fun collectData(sampling: Int, context: Context): Flowable<SensorData> {
 }
 
 fun Flowable<SensorData>.recordData(seconds: Int): Flowable<Array<FloatArray>> {
-    return buffer(100 / 25)
+    return buffer(aiRecordAverageSize)
         // average data
         .map {
             it.reduce { acc, sensorData ->
                 acc + sensorData
             } / SensorDataActivity.AVERAGE_COUNT.toLong()
         }
-        .buffer(25 * seconds)
+        .buffer(aiWindowSize * seconds)
         .map { list ->
             list.map { sensorData ->
                 floatArrayOf(
@@ -132,18 +135,20 @@ fun Flowable<Array<Array<Array<Float>>>>.obtainFeature(context: Context): Flowab
                     twoD.asList()
                 }
         }.toFloatArray()
-        val sampleSize = 25 * 9 //sample size = 25 * 9  ->  ( 9 + 9 + ... + 9)
+        val sampleWidth = it[0].size
+        val width = it[0][0].size
+        val sampleSize = sampleWidth * width //sample size = 25 * 9  ->  ( 9 + 9 + ... + 9)
         val cutoff = flatData.size % sampleSize
         val inputArray = flatData.dropLast(cutoff).toFloatArray()
 
-        var x = arrayOf<FloatArray>()
+        var result = arrayOf<FloatArray>()
         for (i in inputArray.indices step sampleSize) {
             val slice = inputArray.slice(IntRange(i, i + sampleSize - 1))
             inputBuffer.loadArray(slice.toFloatArray())
             interpreter.run(inputBuffer.buffer, outputBuffer.buffer.rewind())
-            x += outputBuffer.floatArray
+            result += outputBuffer.floatArray
         }
-        x
+        result
     }
 }
 

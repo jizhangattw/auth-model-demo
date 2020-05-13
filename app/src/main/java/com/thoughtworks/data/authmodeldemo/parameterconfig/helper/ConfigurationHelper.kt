@@ -5,11 +5,11 @@ import android.content.Context
 class ConfigurationHelper(context: Context) {
     private val sharedPreferences = context.getSharedPreferences("parameter_configuration", Context.MODE_PRIVATE)
 
-    var trainDelay: Float
-        get() = sharedPreferences.getFloat(TRAIN_DELAY, 90.0f)
+    var trainDelay: Int
+        get() = sharedPreferences.getInt(TRAIN_DELAY, 90)
         set(value) {
             sharedPreferences.edit()
-                .putFloat(TRAIN_DELAY, value)
+                .putInt(TRAIN_DELAY, value)
                 .apply()
         }
 
@@ -29,16 +29,16 @@ class ConfigurationHelper(context: Context) {
                 .apply()
         }
 
-    var detectDelay: Float
-        get() = sharedPreferences.getFloat(DETECT_DELAY, 10.0f)
+    var detectDelay: Int
+        get() = sharedPreferences.getInt(DETECT_DELAY, 10)
         set(value) {
             sharedPreferences.edit()
-                .putFloat(DETECT_DELAY, value)
+                .putInt(DETECT_DELAY, value)
                 .apply()
         }
 
     var threshold: Float
-        get() = sharedPreferences.getFloat(THRESHOLD, 10.0f)
+        get() = sharedPreferences.getFloat(THRESHOLD, 0.5f)
         set(value) {
             sharedPreferences.edit()
                 .putFloat(THRESHOLD, value)
