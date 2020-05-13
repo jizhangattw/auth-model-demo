@@ -33,16 +33,14 @@ fun startTraining(context: Context): Flowable<Boolean> {
 
 private fun Flowable<Array<FloatArray>>.trainOCSVMModel(): Flowable<Boolean> {
     return map {
-        var result = false
         val python = Python.getInstance()
         try {
             python.getModule("testSklearn").callAttr(
                 "train_and_save_model", it
             )
-            result = true
+            true
         } catch (throwable: Throwable) {
-            result = false
+            false
         }
-        result
     }
 }

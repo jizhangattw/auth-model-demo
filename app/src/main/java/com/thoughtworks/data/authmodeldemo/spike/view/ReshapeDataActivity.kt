@@ -73,8 +73,8 @@ class ReshapeDataActivity : AppCompatActivity() {
             .buffer(ms(25).toInt() * TIME)
             // to 2d float array
             .map {
-                return@map it.map {
-                    return@map floatArrayOf(
+                it.map {
+                    floatArrayOf(
                         it.accelerometer.x,
                         it.accelerometer.y,
                         it.accelerometer.z,
