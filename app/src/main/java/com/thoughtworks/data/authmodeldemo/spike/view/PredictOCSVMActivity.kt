@@ -205,15 +205,15 @@ class PredictOCSVMActivity : AppCompatActivity() {
                 val result = python.getModule("testSklearn").callAttr(
                     "predict", list
                 )
-
-                result
+                val total = result.size;
+                val successCount = result
                     .asList()
                     .toTypedArray()
                     .map { it.toString().toInt() }
                     .filter {
                         it.toInt() != -1
-                    }
-                    .average() > 0.5
+                    }.size
+                successCount/total>0.5
             }
     }
 
