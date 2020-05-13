@@ -18,6 +18,12 @@
         android:text="@string/sign_up" />
 
     <Button
+        android:id="@+id/logInButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/log_in" />
+
+    <Button
         android:id="@+id/spikeSensorDataCollectionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

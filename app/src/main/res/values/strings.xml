@@ -16,11 +16,12 @@
     <string name="spike_trainOCSVM">Spike 训练OCSVM</string>
     <string name="spike_predictOCSVM">Spike 预测OCSVM</string>
     <string name="sign_up">注册</string>
-    <string name="hello_for_not_log_in">你好, 还没有登陆哟。</string>
+    <string name="hello_for_not_log_in">你好, 还没有登录哟。</string>
     <string name="waiting_for_typing_start">等待输入开始</string>
     <string name="go_on_for_typing">请继续输入，大概进度%d%%</string>
     <string name="typing_done">完成注册</string>
     <string name="please_type_text">请按照上面给出的文字进行输入，直到下面注册按钮可用并提示完成注册。</string>
+    <string name="log_in">登录</string>
     <string-array name="preview_text">
         <item>敏捷宣言强调的敏捷软件开发的四个核心价值是：个体和互动高于流程和工具，工作的软件高于详尽的文档，客户合作高于合同谈判，响应变化高于遵循计划。</item>
         <item>无论我们发现了什么，考虑到当时的已知情况、个人的技术水平和能力、可用的资源，以及手上的状况，我们理解并坚信：每个人对自己的工作都已全力以赴。</item>

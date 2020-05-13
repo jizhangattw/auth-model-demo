@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.thoughtworks.data.authmodeldemo.R
+import com.thoughtworks.data.authmodeldemo.login.view.LogInActivity
 import com.thoughtworks.data.authmodeldemo.signup.view.SignUpActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.GenerateFeatureActivity
 import com.thoughtworks.data.authmodeldemo.spike.view.GetFeatureActivity
@@ -30,6 +31,11 @@ class MainActivity : AppCompatActivity() {
     private fun setupEvent() {
         signUpButton.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
+            startActivity(intent)
+        }
+
+        logInButton.setOnClickListener {
+            val intent = Intent(this, LogInActivity::class.java)
             startActivity(intent)
         }
 
