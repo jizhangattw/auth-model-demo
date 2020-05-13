@@ -22,13 +22,13 @@ fun startTraining(context: Context): Flowable<Boolean> {
             backupData("before_normalized.json", Gson().toJson(it), context)
         }
         .normalized()
-        .map {
+        .doOnNext {
             backupData("after_normalized.json", Gson().toJson(it), context)
-            it
         }
         .reshapeData(25, 25)
         .obtainFeature(context)
         .trainOCSVMModel()
+        .take(1)
         .subscribeOn(Schedulers.computation())
         .observeOn(AndroidSchedulers.mainThread())
 }
