@@ -49,8 +49,6 @@ class TrainOCSVMActivity : AppCompatActivity() {
     }
 
     private fun listenGravitySensorByObserve() {
-        val sharedPreferences: SharedPreferences = getPreferences(Context.MODE_PRIVATE)
-
         collectData(10)
             .recordData()
             .map {
