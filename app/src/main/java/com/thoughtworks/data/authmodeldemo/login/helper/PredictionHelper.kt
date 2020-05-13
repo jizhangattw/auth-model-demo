@@ -39,13 +39,14 @@ private fun Flowable<Array<FloatArray>>.predictOCSVMModel(): Flowable<Boolean> {
             "predict", list
         )
 
-        result
+        val total = result.asList().size;
+        val successCount = result
             .asList()
             .toTypedArray()
             .map { it.toString().toInt() }
             .filter {
                 it.toInt() != -1
-            }
-            .average() > 0.5
+            }.size
+        successCount.toFloat()/total>0.5
     }
 }
