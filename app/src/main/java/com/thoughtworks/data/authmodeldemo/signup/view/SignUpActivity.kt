@@ -34,10 +34,11 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun updateProgress() {
+        val trainDelay = ConfigurationHelper(this).trainDelay
         Observable.interval(0, 1, TimeUnit.SECONDS)
-            .take(90)
+            .take(trainDelay.toLong())
             .map {
-                it / 90f * 100
+                it / trainDelay.toFloat() * 100
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

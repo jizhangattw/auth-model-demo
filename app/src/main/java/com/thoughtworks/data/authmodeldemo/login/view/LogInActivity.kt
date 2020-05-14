@@ -58,10 +58,11 @@ class LogInActivity : AppCompatActivity() {
     }
 
     private fun updateProgress() {
+        val detectDelay = ConfigurationHelper(this).detectDelay
         Observable.interval(0, 1, TimeUnit.SECONDS)
-            .take(10)
+            .take(detectDelay.toLong())
             .map {
-                it / 10f * 100
+                it / detectDelay.toFloat() * 100
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
