@@ -2,6 +2,7 @@ import pickle
 from os.path import dirname, join
 import numpy as np
 from sklearn.svm import OneClassSVM
+from com.chaquo.python import Python
 
 def testOcsvm():
     train_X = np.load(join(dirname(__file__), 'train_X.npy'))
@@ -29,7 +30,8 @@ def train_and_save_model(train_X, nu=0.092, gamma=1.151, model_file_name='ocsvm.
     '''
     model = OneClassSVM(kernel="rbf", nu=nu, gamma=gamma)
     model.fit(train_X)
-    with open(join(dirname(__file__), model_file_name), 'wb') as f:
+    files_dir = str(Python.getPlatform().getApplication().getFilesDir())
+    with open(join(files_dir, model_file_name), 'wb') as f:
         pickle.dump(model, f)
     print("save model done!")
 
@@ -39,6 +41,7 @@ def predict(test_X, model_file_name='ocsvm.pickle'):
     :param model_file_name:
     :return: (n,)  int
     '''
-    with open(join(dirname(__file__), model_file_name),'rb') as f:
+    files_dir = str(Python.getPlatform().getApplication().getFilesDir())
+    with open(join(files_dir, model_file_name),'rb') as f:
         model = pickle.load(f)
     return model.predict(test_X)
