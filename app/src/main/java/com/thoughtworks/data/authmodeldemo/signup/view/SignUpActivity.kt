@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.thoughtworks.data.authmodeldemo.R
+import com.thoughtworks.data.authmodeldemo.parameterconfig.helper.ConfigurationHelper
 import com.thoughtworks.data.authmodeldemo.signup.helper.startTraining
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -70,7 +71,9 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun displayPreviewByRandom() {
-        previewTextView.text = getString(R.string.preview_text)
+        val englishLanguageToggle = ConfigurationHelper(this).englishLanguageToggle
+        previewTextView.text =
+            if (englishLanguageToggle) getString(R.string.preview_text_english) else getString(R.string.preview_text)
     }
 
     private fun disableSignUpButton() {

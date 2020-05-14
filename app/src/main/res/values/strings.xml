@@ -18,6 +18,7 @@
     <string name="log_in_allow">验证通过，可登录</string>
     <string name="log_in_disable">验证未通过，不可登录，请重新进入登录页</string>
     <string name="preview_text">敏捷宣言强调的敏捷软件开发的四个核心价值是：个体和互动高于流程和工具，工作的软件高于详尽的文档，客户合作高于合同谈判，响应变化高于遵循计划。</string>
+    <string name="preview_text_english">The four core values of agile software development highlighted in the Agile Manifesto are: individuality and interaction are higher than processes and tools, working software is higher than detailed documentation, customer cooperation is higher than contract negotiation, and response to changes is higher than following the plan.</string>
     <string name="spike_sensor_data_collection">Spike Sensor数据采集</string>
     <string name="spike_feature">Spike 特征生成</string>
     <string name="spike_reshapeData">Spike 数据分段</string>

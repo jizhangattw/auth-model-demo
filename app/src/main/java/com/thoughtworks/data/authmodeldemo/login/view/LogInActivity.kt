@@ -5,12 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.thoughtworks.data.authmodeldemo.R
 import com.thoughtworks.data.authmodeldemo.login.helper.startPrediction
+import com.thoughtworks.data.authmodeldemo.parameterconfig.helper.ConfigurationHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_log_in.*
+import kotlinx.android.synthetic.main.activity_log_in.previewTextView
+import kotlinx.android.synthetic.main.activity_log_in.typingEditText
+import kotlinx.android.synthetic.main.activity_sign_up.*
 import java.util.concurrent.TimeUnit
 
 class LogInActivity : AppCompatActivity() {
@@ -74,7 +78,9 @@ class LogInActivity : AppCompatActivity() {
     }
 
     private fun displayPreviewByRandom() {
-        previewTextView.text = getString(R.string.preview_text)
+        val englishLanguageToggle = ConfigurationHelper(this).englishLanguageToggle
+        previewTextView.text =
+            if (englishLanguageToggle) getString(R.string.preview_text_english) else getString(R.string.preview_text)
     }
 
     private fun disableLogInButton() {
