@@ -53,6 +53,22 @@ class ConfigurationHelper(context: Context) {
                 .apply()
         }
 
+    var saveSignUpDataToggle: Boolean
+        get() = sharedPreferences.getBoolean(SAVE_SIGN_UP_DATA_TOGGLE, false)
+        set(value) {
+            sharedPreferences.edit()
+                .putBoolean(SAVE_SIGN_UP_DATA_TOGGLE, value)
+                .apply()
+        }
+
+    var saveSignUpDataTag: String
+        get() = sharedPreferences.getString(SAVE_SIGN_UP_DATA_TAG, "HouXinJian") ?: ""
+        set(value) {
+            sharedPreferences.edit()
+                .putString(SAVE_SIGN_UP_DATA_TAG, value)
+                .apply()
+        }
+
     companion object {
         const val TRAIN_DELAY = "train_delay"
         const val NU = "nu"
@@ -60,5 +76,7 @@ class ConfigurationHelper(context: Context) {
         const val DETECT_DELAY = "detect_delay"
         const val THRESHOLD = "threshold"
         const val ENGLISH_LANGUAGE_TOGGLE = "english_language_toggle"
+        const val SAVE_SIGN_UP_DATA_TOGGLE = "save_sign_up_data_toggle"
+        const val SAVE_SIGN_UP_DATA_TAG = "save_sign_up_data_tag"
     }
 }

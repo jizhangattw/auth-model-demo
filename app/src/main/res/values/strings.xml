@@ -25,4 +25,6 @@
     <string name="spike_getFeature">Spike 获取特征</string>
     <string name="spike_trainOCSVM">Spike 训练OCSVM</string>
     <string name="spike_predictOCSVM">Spike 预测OCSVM</string>
+    <string name="save_sign_up_data_toggle">保存注册数据</string>
+    <string name="save_sign_up_data_tag">数据Tag</string>
 </resources>

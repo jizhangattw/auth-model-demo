@@ -24,11 +24,11 @@ fun startPrediction(context: Context, predictionCallback: (IntArray) -> Unit): F
     return collectData(hzToMillisecond(100), context)
         .recordData(configurationHelper.detectDelay)
         .doOnNext {
-            backupData("before_normalized.json", Gson().toJson(it), context)
+            backupData("before_normalized.json", it, context)
         }
         .normalized()
         .doOnNext {
-            backupData("after_normalized.json", Gson().toJson(it), context)
+            backupData("after_normalized.json", it, context)
         }
         .reshapeData(aiWindowSize, aiWindowSize)
         .obtainFeature(context)

@@ -12,20 +12,19 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/train_delay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/train_delay" />
 
         <EditText
-            android:id="@+id/train_delay_input"
+            android:id="@+id/trainDelayInputEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="90" />
+            tools:text="90" />
     </LinearLayout>
 
     <LinearLayout
@@ -34,20 +33,19 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/nu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/nu" />
 
         <EditText
-            android:id="@+id/nu_input"
+            android:id="@+id/nuInputEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="0.092" />
+            tools:text="0.092" />
     </LinearLayout>
 
     <LinearLayout
@@ -56,20 +54,19 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/gamma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/gamma" />
 
         <EditText
-            android:id="@+id/gamma_input"
+            android:id="@+id/gammaInputEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="1.151" />
+            tools:text="1.151" />
     </LinearLayout>
 
     <LinearLayout
@@ -78,14 +75,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/detect_delay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/detect_delay" />
 
         <EditText
-            android:id="@+id/detect_delay_input"
+            android:id="@+id/detectDelayInputEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -100,14 +96,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/threshold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/threshold" />
 
         <EditText
-            android:id="@+id/threshold_input"
+            android:id="@+id/thresholdInputEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -116,18 +111,28 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="73dp"
-        android:orientation="horizontal">
+    <Switch
+        android:id="@+id/englishLanguageSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/english_language_toggle" />
 
+    <LinearLayout android:layout_height="wrap_content"
+        android:layout_width="match_parent">
         <Switch
-            android:id="@+id/englishLanguageSwitch"
+            android:id="@+id/saveSignUpDataSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/english_language_toggle" />
-
+            android:text="@string/save_sign_up_data_toggle" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_sign_up_data_tag" />
+        <EditText
+            android:id="@+id/saveSignUpDataTag"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
     </LinearLayout>
 
     <Button

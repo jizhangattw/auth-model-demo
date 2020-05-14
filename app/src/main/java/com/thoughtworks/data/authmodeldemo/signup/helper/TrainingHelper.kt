@@ -23,11 +23,11 @@ fun startTraining(context: Context): Flowable<Boolean> {
     return collectData(hzToMillisecond(100), context)
         .recordData(configurationHelper.trainDelay)
         .doOnNext {
-            backupData("before_normalized.json", Gson().toJson(it), context)
+            backupData("before_normalized.json", it, context)
         }
         .normalized()
         .doOnNext {
-            backupData("after_normalized.json", Gson().toJson(it), context)
+            backupData("after_normalized.json", it, context)
         }
         .reshapeData(aiWindowSize, aiWindowSize)
         .obtainFeature(context)
