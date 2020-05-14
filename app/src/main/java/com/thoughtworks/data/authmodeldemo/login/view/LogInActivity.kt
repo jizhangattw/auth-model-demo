@@ -35,13 +35,19 @@ class LogInActivity : AppCompatActivity() {
             }
             .subscribe {
                 updateProgress()
-                startPrediction(this)
+                startPrediction(this, { data -> displayResultData(data)})
                     .subscribe {
                         logInButton.isEnabled = it
                         logInButton.text = if (it) getString(R.string.log_in_allow) else getString(R.string.log_in_disable)
                     }
                     .addTo(disposable)
             }
+    }
+
+    private fun displayResultData(data: IntArray) {
+        runOnUiThread {
+            predictionResultDataTextView.text = data.joinToString(",", "[", "]")
+        }
     }
 
     private fun updateProgress() {

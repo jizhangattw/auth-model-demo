@@ -14,9 +14,10 @@ import com.thoughtworks.data.authmodeldemo.common.util.hzToMillisecond
 import com.thoughtworks.data.authmodeldemo.parameterconfig.helper.ConfigurationHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.kotlin.toFlowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-fun startPrediction(context: Context): Flowable<Boolean> {
+fun startPrediction(context: Context, predictionCallback: (IntArray) -> Unit): Flowable<Boolean> {
     val configurationHelper = ConfigurationHelper(context)
     val executeCount: Long = 1
 
@@ -31,15 +32,18 @@ fun startPrediction(context: Context): Flowable<Boolean> {
         }
         .reshapeData(aiWindowSize, aiWindowSize)
         .obtainFeature(context)
-        .predictOCSVMModel(context)
+        .predictOCSVMModel()
+        .doOnNext {
+            predictionCallback(it)
+        }
+        .analyzePredictionOCSVMModelResult(context)
+        .doOnComplete {  }
         .take(executeCount)
         .subscribeOn(Schedulers.computation())
         .observeOn(AndroidSchedulers.mainThread())
 }
 
-private fun Flowable<Array<FloatArray>>.predictOCSVMModel(context: Context): Flowable<Boolean> {
-    val configurationHelper = ConfigurationHelper(context)
-
+private fun Flowable<Array<FloatArray>>.predictOCSVMModel(): Flowable<IntArray> {
     return map { list ->
         val python = Python.getInstance()
 
@@ -47,14 +51,19 @@ private fun Flowable<Array<FloatArray>>.predictOCSVMModel(context: Context): Flo
             "predict", list
         )
 
-        val total = result.asList().size;
-        val successCount = result
+        result
             .asList()
             .toTypedArray()
             .map { it.toString().toInt() }
-            .filter {
-                it != -1
-            }.size
-        successCount.toFloat() / total > configurationHelper.threshold
+            .toIntArray()
+    }
+}
+
+private fun Flowable<IntArray>.analyzePredictionOCSVMModelResult(context: Context): Flowable<Boolean> {
+    val configurationHelper = ConfigurationHelper(context)
+    return map {
+        val size = it.size
+        val successSize = it.filter { it != -1 }.size
+        successSize.toFloat() / size > configurationHelper.threshold
     }
 }
