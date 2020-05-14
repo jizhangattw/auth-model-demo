@@ -11,7 +11,6 @@
     <string name="sign_up">注册</string>
     <string name="log_in">登录</string>
     <string name="typing_done">完成注册</string>
-    <string name="hello_for_not_log_in">你好, 还没有登录哟。</string>
     <string name="waiting_for_typing_start">等待输入开始</string>
     <string name="go_on_for_typing">请继续输入，大概进度%d%%</string>
     <string name="please_type_text">请按照上面给出的文字进行输入，直到下面注册按钮可用并提示完成注册。</string>

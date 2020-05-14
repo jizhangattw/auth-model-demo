@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        helloMessageTextView.text = getString(R.string.hello_for_not_log_in)
         setupEvent()
 
         title = getString(R.string.app_name)

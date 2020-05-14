@@ -6,11 +6,6 @@
     android:orientation="vertical"
     tools:context=".main.view.MainActivity">
 
-    <TextView
-        android:id="@+id/helloMessageTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <Button
         android:id="@+id/signUpButton"
         android:layout_width="match_parent"
