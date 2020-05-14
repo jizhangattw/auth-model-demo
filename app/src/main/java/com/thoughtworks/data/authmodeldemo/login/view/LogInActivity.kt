@@ -46,7 +46,10 @@ class LogInActivity : AppCompatActivity() {
 
     private fun displayResultData(data: IntArray) {
         runOnUiThread {
-            predictionResultDataTextView.text = data.joinToString(",", "[", "]")
+            val failureCount = data.asList().filter { it == -1 }.count()
+            val successCount = data.asList().filter { it == 1 }.count()
+            val rawDataString = data.joinToString(",", "[", "]")
+            predictionResultDataTextView.text = "$rawDataString\n-1: $failureCount\n1:$successCount"
         }
     }
 
